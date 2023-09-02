@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phonetic Alphabet Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container mx-auto px-4">
+        <h1 class="text-4xl font-bold my-8">Phonetic Alphabet Quiz</h1>
+        <div id="quiz-container" class="mb-8">
+            <h2 id="letter" class="text-6xl font-bold mb-4"></h2>
+            <form id="quiz-form" class="mb-4">
+                <input id="answer" type="text" class="border-2 border-gray-300 rounded-lg px-4 py-2 w-full mb-4" placeholder="Enter your answer here">
+                <div class="flex items-center">
+                    <input type="radio" id="nato" name="alphabet" value="nato" checked>
+                    <label for="nato" class="mr-4">NATO</label>
+                    <input type="radio" id="swedish" name="alphabet" value="swedish">
+                    <label for="swedish">Swedish</label>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-4">Submit</button>
+            </form>
+        </div>
+        <div id="history-container" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">History</h2>
+            <ul id="history"></ul>
+        </div>
+        <div id="tables-container">
+            <div id="nato-table" class="mb-8">
+                <h2 class="text-2xl font-bold mb-4">NATO Phonetic Alphabet</h2>
+                <table class="w-full"></table>
+            </div>
+            <div id="swedish-table">
+                <h2 class="text-2xl font-bold mb-4">Swedish Phonetic Alphabet</h2>
+                <table class="w-full"></table>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

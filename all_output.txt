@@ -1,0 +1,253 @@
+Let's start by creating the server.js file:
+
+server.js
+
+```js
+const express = require("express");
+const path = require("path");
+const app = express();
+const port = 8080;
+
+app.use(express.static(path.join(__dirname, "public")));
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
+```
+
+Next, we will create the index.html file:
+
+public/index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phonetic Alphabet Quiz</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.1.2/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container mx-auto px-4">
+        <h1 class="text-4xl font-bold my-8">Phonetic Alphabet Quiz</h1>
+        <div id="quiz-container" class="mb-8">
+            <h2 id="letter" class="text-6xl font-bold mb-4"></h2>
+            <form id="quiz-form" class="mb-4">
+                <input id="answer" type="text" class="border-2 border-gray-300 rounded-lg px-4 py-2 w-full mb-4" placeholder="Enter your answer here">
+                <div class="flex items-center">
+                    <input type="radio" id="nato" name="alphabet" value="nato" checked>
+                    <label for="nato" class="mr-4">NATO</label>
+                    <input type="radio" id="swedish" name="alphabet" value="swedish">
+                    <label for="swedish">Swedish</label>
+                </div>
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-4">Submit</button>
+            </form>
+        </div>
+        <div id="history-container" class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">History</h2>
+            <ul id="history"></ul>
+        </div>
+        <div id="tables-container">
+            <div id="nato-table" class="mb-8">
+                <h2 class="text-2xl font-bold mb-4">NATO Phonetic Alphabet</h2>
+                <table class="w-full"></table>
+            </div>
+            <div id="swedish-table">
+                <h2 class="text-2xl font-bold mb-4">Swedish Phonetic Alphabet</h2>
+                <table class="w-full"></table>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
+```
+
+Next, we will create the main.js file:
+
+public/main.js
+
+```js
+const natoAlphabet = {
+    A: 'Alpha',
+    B: 'Bravo',
+    C: 'Charlie',
+    D: 'Delta',
+    E: 'Echo',
+    F: 'Foxtrot',
+    G: 'Golf',
+    H: 'Hotel',
+    I: 'India',
+    J: 'Juliett',
+    K: 'Kilo',
+    L: 'Lima',
+    M: 'Mike',
+    N: 'November',
+    O: 'Oscar',
+    P: 'Papa',
+    Q: 'Quebec',
+    R: 'Romeo',
+    S: 'Sierra',
+    T: 'Tango',
+    U: 'Uniform',
+    V: 'Victor',
+    W: 'Whiskey',
+    X: 'X-ray',
+    Y: 'Yankee',
+    Z: 'Zulu'
+};
+
+const swedishAlphabet = {
+    A: 'Adam',
+    B: 'Bertil',
+    C: 'Cesar',
+    D: 'David',
+    E: 'Erik',
+    F: 'Filip',
+    G: 'Gustav',
+    H: 'Helge',
+    I: 'Ivar',
+    J: 'Johan',
+    K: 'Kalle',
+    L: 'Ludvig',
+    M: 'Martin',
+    N: 'Niklas',
+    O: 'Olof',
+    P: 'Petter',
+    Q: 'Quintus',
+    R: 'Rikard',
+    S: 'Sigurd',
+    T: 'Tore',
+    U: 'Urban',
+    V: 'Viktor',
+    W: 'Wilhelm',
+    X: 'Xerxes',
+    Y: 'Yngve',
+    Z: 'Zäta',
+    Å: 'Åke',
+    Ä: 'Ärlig',
+    Ö: 'Östen'
+};
+
+let currentLetter = '';
+let history = [];
+let correctCount = 0;
+
+function getRandomLetter() {
+    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ';
+    return letters[Math.floor(Math.random() * letters.length)];
+}
+
+function updateLetter() {
+    currentLetter = getRandomLetter();
+    document.getElementById('letter').textContent = currentLetter;
+}
+
+function checkAnswer(answer) {
+    const alphabet = document.querySelector('input[name="alphabet"]:checked').value;
+    const correctAnswer = alphabet === 'nato' ? natoAlphabet[currentLetter] : swedishAlphabet[currentLetter];
+    return answer === correctAnswer;
+}
+
+function updateHistory(answer, isCorrect) {
+    history.push({ answer, isCorrect });
+    const historyElement = document.getElementById('history');
+    historyElement.innerHTML = '';
+    history.forEach((entry, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${index + 1}. ${entry.answer} - ${entry.isCorrect ? 'Correct' : 'Incorrect'}`;
+        li.className = entry.isCorrect ? 'text-green-500' : 'text-red-500';
+        historyElement.appendChild(li);
+    });
+}
+
+function updateScore() {
+    const score = (correctCount / history.length) * 100;
+    document.getElementById('score').textContent = `Score: ${score.toFixed(2)}%`;
+}
+
+document.getElementById('quiz-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const answer = document.getElementById('answer').value;
+    const isCorrect = checkAnswer(answer);
+    if (isCorrect) correctCount++;
+    updateHistory(answer, isCorrect);
+    updateScore();
+    updateLetter();
+    document.getElementById('answer').value = '';
+});
+
+updateLetter();
+```
+
+Finally, we will create the style.css file:
+
+public/style.css
+
+```css
+body {
+    background-color: #f3f4f6;
+}
+
+.container {
+    max-width: 800px;
+}
+
+#quiz-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+#history-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+#tables-container {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f3f4f6;
+}
+```
+
+Lastly, we need to create the package.json file:
+
+package.json
+
+```json
+{
+  "name": "phonetic-alphabet-quiz",
+  "version": "1.0.0",
+  "description": "A quiz app to learn the Swedish and NATO phonetic alphabet",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
+```
+
+To run the project, you need to install the dependencies first by running `npm install` in the terminal. After that, you can start the server by running `npm start`. The app will be accessible at `http://localhost:8080`.
